@@ -1,5 +1,6 @@
 package com.fastcampus.jpa.bookmanager2.repository;
 
+import com.fastcampus.jpa.bookmanager2.domain.Gender;
 import com.fastcampus.jpa.bookmanager2.domain.User;
 import org.assertj.core.util.Lists;
 import org.junit.jupiter.api.Test;
@@ -98,6 +99,30 @@ class UserRepositoryTest {
 		System.out.println("findFirstByNameWithSortParams : " + userRepository.findFirstByName("martin", Sort.by(Sort.Order.desc("id"), Sort.Order.asc("email"))));
 		System.out.println("findFirstByNameWithPaging : " + userRepository.findByName("martin", PageRequest.of(0, 1, Sort.by(Sort.Order.desc("id")))).getContent());
 
+
+	}
+
+	@Test
+	void insertAndUpdateTest() {
+		User user = new User();
+		user.setName("martin");
+		user.setEmail("martin2Wfast.com");
+		userRepository.save(user);
+		User user2 = userRepository.findById(1L).orElseThrow(RuntimeException::new);
+		user2.setName("2222");
+		userRepository.save(user2);
+	}
+
+	@Test
+	void enumTest() {
+		User user = userRepository.findById(1L).orElseThrow(RuntimeException::new);
+		user.setGender(Gender.MALE);
+
+		userRepository.save(user);
+
+		userRepository.findAll().forEach(System.out::println);
+
+		System.out.println(userRepository.findRawRecord().get("gender"));
 	}
 
 }
