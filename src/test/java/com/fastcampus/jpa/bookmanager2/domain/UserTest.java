@@ -6,7 +6,7 @@ import java.time.LocalDateTime;
 
 class UserTest {
 	@Test
-	void test(){
+	void test() {
 		User user = new User();
 		user.setEmail("martin@fast.com");
 		user.setName("martin");
