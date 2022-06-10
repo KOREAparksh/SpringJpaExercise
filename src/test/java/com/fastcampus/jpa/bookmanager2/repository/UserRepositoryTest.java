@@ -1,6 +1,5 @@
 package com.fastcampus.jpa.bookmanager2.repository;
 
-import com.fastcampus.jpa.bookmanager2.domain.Gender;
 import com.fastcampus.jpa.bookmanager2.domain.User;
 import org.assertj.core.util.Lists;
 import org.junit.jupiter.api.Test;
@@ -15,6 +14,8 @@ import java.time.LocalDateTime;
 class UserRepositoryTest {
 	@Autowired
 	private UserRepository userRepository;
+	@Autowired
+	private UserHistoryRepository userHistoryRepository;
 
 	@Test
 	void crud() {
@@ -63,7 +64,7 @@ class UserRepositoryTest {
 		System.out.println("streamByEmail : " + userRepository.streamByEmail("martin@faset.com"));
 		System.out.println("findUserByEmail : " + userRepository.findUserByEmail("martin@faset.com"));
 		System.out.println("findSomethingByEmail : " + userRepository.findSomethingByEmail("martin@faset.com"));
-//
+
 //		System.out.println("findTop1ByName : " + userRepository.findTop1ByName("martin"));
 		System.out.println("findFirst1ByName : " + userRepository.findFirst1ByName("martin"));
 		System.out.println("findTop2ByName : " + userRepository.findTop2ByName("martin"));
@@ -98,8 +99,6 @@ class UserRepositoryTest {
 		System.out.println("findFirstByNameOrderByIdDescEmailAsc : " + userRepository.findFirstByNameOrderByIdDescEmailAsc("martin"));
 		System.out.println("findFirstByNameWithSortParams : " + userRepository.findFirstByName("martin", Sort.by(Sort.Order.desc("id"), Sort.Order.asc("email"))));
 		System.out.println("findFirstByNameWithPaging : " + userRepository.findByName("martin", PageRequest.of(0, 1, Sort.by(Sort.Order.desc("id")))).getContent());
-
-
 	}
 
 	@Test
@@ -116,13 +115,67 @@ class UserRepositoryTest {
 	@Test
 	void enumTest() {
 		User user = userRepository.findById(1L).orElseThrow(RuntimeException::new);
-		user.setGender(Gender.MALE);
+//		user.setGender(Gender.MALE);
 
 		userRepository.save(user);
 
-		userRepository.findAll().forEach(System.out::println);
+		System.out.println(userRepository.findRawRecord());
 
-		System.out.println(userRepository.findRawRecord().get("gender"));
+
+		System.out.println(userRepository.findRawRecord());
 	}
 
+	@Test
+	void listenerTest() {
+		User user = new User();
+		user.setEmail("martin2@fastcampus.com");
+		user.setName("martin");
+		userRepository.save(user);
+
+		User user2 = userRepository.findById(1L).orElseThrow(RuntimeException::new);
+		user2.setName("marrrtin");
+
+		userRepository.save(user2);
+		userRepository.deleteById(4L);
+	}
+
+	@Test
+	void prePersistTest() {
+		User user = new User();
+		user.setEmail("martin2@fastcampus.com");
+		user.setName("martin");
+//		user.setCreatedAt(LocalDateTime.now());
+//		user.setUpdatedAt(LocalDateTime.now());
+
+		userRepository.save(user);
+		System.out.println(userRepository.findByEmail("martin2@fastcampus.com"));
+	}
+
+	@Test
+	void preUpdateTest() {
+		User user = userRepository.findById(1L).orElseThrow(RuntimeException::new);
+		System.out.println("as-is : " + user);
+
+		user.setName("martin");
+		//바뀐게 없다면 ? -> save가안되면서 실행안됨
+		userRepository.save(user);
+
+		System.out.println("to-be: " + userRepository.findAll().get(0));
+
+	}
+
+	@Test
+	void userHistoryTest() {
+		User user = new User();
+		user.setEmail("martin-new@fastcampus.com");
+		user.setName("martin-new");
+
+		userRepository.save(user);
+
+		user.setName("martin-new-new");
+
+		userRepository.save(user);
+
+		userHistoryRepository.findAll().forEach(System.out::println);
+	}
 }

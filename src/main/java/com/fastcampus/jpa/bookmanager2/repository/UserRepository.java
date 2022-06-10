@@ -13,7 +13,7 @@ import java.util.Map;
 import java.util.Set;
 
 public interface UserRepository extends JpaRepository<User, Long> {
-	Set<User> findByName(String name);
+	List<User> findByName(String name);
 
 	Set<User> findUserByNameIs(String name);
 
@@ -85,6 +85,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
 	List<User> findFirstByNameOrderByIdDescEmailAsc(String name);
 
 	List<User> findFirstByName(String name, Sort sort);
+
 
 	Page<User> findByName(String name, Pageable pageable);
 
