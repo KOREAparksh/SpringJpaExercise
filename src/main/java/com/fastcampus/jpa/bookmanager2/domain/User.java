@@ -1,11 +1,12 @@
 package com.fastcampus.jpa.bookmanager2.domain;
 
-import com.fastcampus.jpa.bookmanager2.domain.listener.Auditable;
 import com.fastcampus.jpa.bookmanager2.domain.listener.UserEntityListener;
 import lombok.*;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 
 
 @Data
@@ -17,10 +18,9 @@ import javax.persistence.*;
 @EqualsAndHashCode(callSuper = true)
 @Entity
 @EntityListeners(value = {AuditingEntityListener.class, UserEntityListener.class})
-//@Table(name = "user", indexes = {@Index(columnList = "name")}, uniqueConstraints = {@UniqueConstraint(columnNames = {"email"})})
-public class User extends BaseEntity implements Auditable {
+public class User extends BaseEntity {
 	@Id
-	@GeneratedValue
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
 	@NonNull
@@ -33,28 +33,8 @@ public class User extends BaseEntity implements Auditable {
 	@Enumerated(value = EnumType.STRING)
 	private Gender gender;
 
-//	@Column(updatable = false)
-//	@CreatedDate
-//	private LocalDateTime createdAt;
-//
-//	@LastModifiedDate
-//	private LocalDateTime updatedAt;
+	@OneToMany(fetch = FetchType.EAGER)
+	@JoinColumn(name = "user_id", insertable = false, updatable = false)
+	private List<UserHistory> userHistories = new ArrayList<>();
 
-//	@Transient
-//	private String testData;
-
-//	@OneToMany(fetch = FetchType.EAGER)
-//	private List<Address> address;
-
-//	@PrePersist
-//	public void prePersist() {
-//		this.createdAt = LocalDateTime.now();
-//		this.updatedAt = LocalDateTime.now();
-//	}
-//
-//
-//	@PreUpdate
-//	public void preUpdate() {
-//		this.updatedAt = LocalDateTime.now();
-//	}
 }

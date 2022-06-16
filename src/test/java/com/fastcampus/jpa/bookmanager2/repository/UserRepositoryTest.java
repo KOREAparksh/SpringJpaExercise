@@ -1,6 +1,8 @@
 package com.fastcampus.jpa.bookmanager2.repository;
 
+import com.fastcampus.jpa.bookmanager2.domain.Gender;
 import com.fastcampus.jpa.bookmanager2.domain.User;
+import com.fastcampus.jpa.bookmanager2.domain.UserHistory;
 import org.assertj.core.util.Lists;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,6 +11,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @SpringBootTest
 class UserRepositoryTest {
@@ -177,5 +180,29 @@ class UserRepositoryTest {
 		userRepository.save(user);
 
 		userHistoryRepository.findAll().forEach(System.out::println);
+	}
+
+	@Test
+	void userRelationTest() {
+		User user = new User();
+		user.setName("david");
+		user.setEmail("david@fc.com");
+		user.setGender(Gender.MALE);
+
+		userRepository.save(user);
+
+		user.setName("daniel");
+		userRepository.save(user);
+		user.setEmail("daniel@fc.com");
+		userRepository.save(user);
+
+//		userHistoryRepository.findAll().forEach(System.out::println);
+//		List<UserHistory> result = userHistoryRepository.findByUserId(
+//				userRepository.findByEmail("daniel@fc.com")
+//						.getId()
+//		);
+		List<UserHistory> result = userRepository.findByEmail("daniel@fc.com")
+				.getUserHistories();
+		result.forEach(System.out::println);
 	}
 }
