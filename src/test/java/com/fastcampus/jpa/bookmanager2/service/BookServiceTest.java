@@ -21,11 +21,13 @@ class BookServiceTest {
 	void transactionTest(){
 		try {
 			bookService.putBookAndAuthor();
-		}catch (RuntimeException e){
+		}catch (Exception e){
 			System.out.println(">>> " +  e.getMessage());
 		}
 
 		System.out.println("books: " + bookRepository.findAll());
 		System.out.println("authors: " + authorRepository.findAll());
 	}
+	//checkedException일 경우 transaction 롤백 안하고 반영함
+	//runtimeException일 경우 transaction 롤백함
 }

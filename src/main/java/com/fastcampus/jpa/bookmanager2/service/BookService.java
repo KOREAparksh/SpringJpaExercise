@@ -16,7 +16,7 @@ public class BookService {
 	private final AuthorRepository authorRepository;
 
 	@Transactional
-	public void putBookAndAuthor(){
+	public void putBookAndAuthor() throws Exception{
 		Book book = new Book();
 		book.setName("JPA 시작하기");
 
@@ -26,6 +26,6 @@ public class BookService {
 		author.setName("martin");
 
 		authorRepository.save(author);
-		throw new RuntimeException("오류가 나서 DB커밋 안됨");
+		throw new Exception("오류가 나서 DB커밋 안됨");
 	}
 }
